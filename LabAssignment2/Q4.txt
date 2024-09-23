@@ -1,0 +1,32 @@
+SELECT
+        employees.employeeNumber,
+        employees.firstName,
+        employees.lastName,
+        offices.city AS city_of_office,
+        offices.officeCode
+       
+        
+FROM employees
+
+INNER JOIN offices ON employees.officeCode = offices.officeCode
+INNER JOIN customers ON employees.employeeNumber = customers.salesRepEmployeeNumber
+INNER JOIN orders ON customers.customerNumber = orders.customerNumber
+INNER JOIN orderdetails ON orders.orderNumber = orderdetails.orderNumber
+
+
+
+
+WHERE orderdetails.productCode IN (
+  SELECT
+          orderdetails.productCode
+  
+  FROM orderDetails
+  
+  INNER JOIN orders ON orderdetails.orderNumber = orders.orderNumber
+  
+  GROUP BY orderdetails.productCode
+  HAVING COUNT(DISTINCT orders.customerNumber) < 20
+      
+  )
+  
+GROUP BY employees.employeeNumber;

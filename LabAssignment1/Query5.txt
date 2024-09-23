@@ -1,0 +1,9 @@
+SELECT 
+    customers.customerName,
+    orders.orderNumber,
+    orders.status
+    
+    
+FROM customers
+
+INNER JOIN orders ON customers.customerNumber = orders.customerNumber;

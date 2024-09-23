@@ -1,0 +1,11 @@
+SELECT 
+    COUNT(DISTINCT orders.customerNumber) AS total_number_of_customers,
+    products.productName
+FROM products
+
+INNER JOIN orderdetails ON products.productCode = orderdetails.productCode
+INNER JOIN orders ON orderdetails.orderNumber = orders.orderNumber
+
+GROUP BY productName
+
+ORDER BY total_number_of_customers DESC;

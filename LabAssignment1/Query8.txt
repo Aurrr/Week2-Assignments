@@ -1,0 +1,13 @@
+SELECT
+    lastName,
+    firstName,
+    employeeNumber,
+    officeCode
+    
+FROM employees
+
+WHERE officeCode IN(
+    SELECT officeCode
+    FROM employees
+    GROUP BY officeCode
+    HAVING COUNT(employeeNumber) < 5);

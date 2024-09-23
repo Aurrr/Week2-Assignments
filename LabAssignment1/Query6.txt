@@ -1,0 +1,11 @@
+SELECT
+    customers.customerName,
+    customers.customerNumber,
+    SUM(payments.amount) AS 'total_payment_amount'
+    
+FROM customers
+
+INNER JOIN payments ON customers.customerNumber = payments.customerNumber
+
+GROUP BY customerName
+ORDER BY SUM(payments.amount) DESC;
