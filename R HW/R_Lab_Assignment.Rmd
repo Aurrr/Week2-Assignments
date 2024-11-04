@@ -1,0 +1,282 @@
+---
+title: "DS311 - R Lab Assignment"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: united
+    highlight: tango
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Assignment 1
+
+* In this assignment, we are going to apply some of the build in data set in R for descriptive statistics analysis.
+* To earn full grade in this assignment, students need to complete the coding tasks for each question to get the result.
+* After finished all the questions, knit the document into HTML format for submission.
+
+### Question 1
+
+Using the **mtcars** data set in R, please answer the following questions.
+
+```{r}
+# Loading the data
+data(mtcars)
+
+# Head of the data set
+head(mtcars)
+```
+
+a. Report the number of variables and observations in the data set.
+
+```{r}
+# Enter your code here!
+dims <- dim(mtcars)
+number_of_variables <- dims[2]
+number_of_observations <-dims[1]
+# Answer:
+print(paste("There are total of", number_of_variables, "variables and", number_of_observations,"observations in this data set."))
+```
+
+
+
+b. Print the summary statistics of the data set and report how many discrete and continuous variables are in the data set.
+
+```{r}
+# Enter your code here!
+
+discrete_variables <- sapply(mtcars, function(x) is.factor(x) || length(unique(x)) < 10)
+number_of_discrete_variables <- sum(discrete_variables)
+
+number_of_continuous_variables <- ncol(mtcars) - number_of_discrete_variables
+
+#print(number_of_continuous_variables)
+#print(number_of_discrete_variables)
+# Answer:
+print(paste("There are", number_of_discrete_variables, "discrete variables and", number_of_continuous_variables, "continuous variables in this data set."))
+```
+
+
+
+c. Calculate the mean, variance, and standard deviation for the variable **mpg** and assign them into variable names m, v, and s. Report the results in the print statement.
+
+```{r}
+# Enter your code here!
+mpgmean <- mean(mtcars$mpg)
+mpgvariance <- var(mtcars$mpg)
+mpgsd <- sd(mtcars$mpg)
+
+#print(mpgmean)
+#print(mpgvariance)
+#print(mpgsd)
+
+print(paste("The average of Mile Per Gallon from this data set is ", mpgmean , " with variance ", mpgvariance , " and standard deviation", mpgsd , "."))
+
+# print(paste("The average of Mile Per Gallon from this data set is ",  , " with variance ",  , " and standard deviation",  , "."))
+```
+
+
+
+d. Create two tables to summarize 1) average mpg for each cylinder class and 2) the standard deviation of mpg for each gear class.
+
+```{r}
+# Enter your code here!
+avg_mpg_cylinder <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+print(avg_mpg_cylinder)
+
+sd_mpg_gearclass <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+print(sd_mpg_gearclass)
+
+```
+
+
+
+e. Create a crosstab that shows the number of observations belong to each cylinder and gear class combinations. The table should show how many observations given the car has 4 cylinders with 3 gears, 4 cylinders with 4 gears, etc. Report which combination is recorded in this data set and how many observations for this type of car.
+
+```{r}
+# Enter your code here!
+
+crosstab <- table(mtcars$cyl, mtcars$gear)
+print(crosstab)
+
+common <- which(crosstab == max(crosstab), arr.ind = TRUE)
+cyl <- rownames(crosstab)[common[1]]
+gears <- colnames(crosstab)[common[2]]
+total <- crosstab[common]
+
+print(paste("The most common car type in this data set is car with", cyl," cylinders and", gears," gears. There are total of ", total," cars belong to this specification in the data set."))
+```
+
+
+*** 
+
+### Question 2
+
+Use different visualization tools to summarize the data sets in this question.
+
+a. Using the **PlantGrowth** data set, visualize and compare the weight of the plant in the three separated group. Give labels to the title, x-axis, and y-axis on the graph. Write a paragraph to summarize your findings.
+
+```{r}
+# Load the data set
+data("PlantGrowth")
+
+# Head of the data set
+head(PlantGrowth)
+
+# Enter your code here!
+library(ggplot2)
+
+ggplot(PlantGrowth, aes(x = group, y = weight)) + geom_boxplot() + labs(title = "Plant Weight comparison",
+    x = "Group",
+    y = "Weight")
+
+```
+
+Result:
+
+=> Report a paragraph to summarize your findings from the plot!
+
+From the plot we can see that both treatments show an inconsistent/not optimal growth pattern. The control group which is the standard for for growth shows to be within the median at a more reliable result. From observation it also shows that treatment 1 has noticeable outliers.
+
+
+b. Using the **mtcars** data set, plot the histogram for the column **mpg** with 10 breaks. Give labels to the title, x-axis, and y-axis on the graph. Report the most observed mpg class from the data set.
+
+```{r}
+hist(mtcars$mpg, breaks = 10, main = "Histogram of Miles Per Gallon", xlab = "Miles Per Gallon (MPG)", ylab = "Frequency", col = "green")
+
+table <- table(cut(mtcars$mpg, breaks = 10))
+most_observed <- names(which.max(table))
+
+print(paste("Most of the cars in this data set are in the class of", most_observed," mile per gallon."))
+```
+
+
+
+c. Using the **USArrests** data set, create a pairs plot to display the correlations between the variables in the data set. Plot the scatter plot with **Murder** and **Assault**. Give labels to the title, x-axis, and y-axis on the graph. Write a paragraph to summarize your results from both plots.
+
+```{r}
+# Load the data set
+data("USArrests")
+
+# Head of the data set
+head(USArrests)
+
+# Enter your code here!
+
+plot(USArrests$Assault, USArrests$Murder,
+     main = "Scatter Plot for Murder vs Assault",
+     xlab = "Assaults per 100,000 of population",
+     ylab = "Murders per 100,000 of population",
+     pch = 19, col = "green")
+
+```
+
+Result:
+
+=> Report a paragraph to summarize your findings from the plot!
+From the plot we can see that there is a positive correlation between both the x and y variables. Murder and Assault are shown to have a correlation of higher murders are resulted with higher assaults. The plot also shows between 50 to 175 assaults, there is a tighter spread of points which is notable information showing the difference between the higher end of assaults 200 and onward.
+
+
+
+***
+
+### Question 3
+
+Download the housing data set from www.jaredlander.com and find out what explains the housing prices in New York City.
+
+Note: Check your working directory to make sure that you can download the data into the data folder. 
+
+```{r, echo=FALSE}
+# Load and clean the housing data set 
+#getwd()
+#setwd("C:/Users/Auriel/Desktop/DS311-Technologies-in-Data-Analytic-#FA24/Week_06_Import_Data_and_Visualization/data")
+#getwd()
+#download.file(url='https://www.jaredlander.com/data/housing.csv',
+      #        destfile='data/housing.csv', mode='wb')
+housingData <- read.csv("C:/Users/Auriel/Desktop/DS311-Technologies-in-Data-Analytic-FA24/Week_06_Import_Data_and_Visualization/data/housing.csv")
+housingData <- subset(housingData, 
+                      select = c("Neighborhood", "Market.Value.per.SqFt", "Boro", "Year.Built"))
+housingData <- na.omit(housingData)                   
+```
+
+a. Create your own descriptive statistics and aggregation tables to summarize the data set and find any meaningful results between different variables in the data set.
+
+```{r}
+# Head of the cleaned data set
+#head(housingData)
+
+# Enter your code here!
+library(dplyr)
+
+#descriptive statistics
+descriptive_statistics <- housingData %>%
+  summarise(
+    count = n(),
+    mean = mean(Market.Value.per.SqFt, na.rm = TRUE),
+    median = median(Market.Value.per.SqFt, na.rm = TRUE),
+    sd = sd(Market.Value.per.SqFt, na.rm = TRUE),
+    min = min(Market.Value.per.SqFt, na.rm = TRUE),
+    max = max(Market.Value.per.SqFt, na.rm = TRUE)
+ 
+    )
+print(descriptive_statistics)
+
+#aggregate table, neighborhood
+avg_value_nbhd <- housingData %>%
+  group_by(Neighborhood) %>%
+  summarise(avg_value_nbhd = mean(Market.Value.per.SqFt, na.rm = TRUE))
+
+print(avg_value_nbhd)
+
+#aggregate table, boro
+avg_value_boro <- housingData %>%
+  group_by(Boro) %>%
+  summarise(avg_value_boro = mean(Market.Value.per.SqFt, na.rm = TRUE))
+
+print(avg_value_boro)
+
+```
+
+b. Create multiple plots to demonstrates the correlations between different variables. Remember to label all axes and give title to each graph.
+
+```{r}
+# Enter your code here!
+#str(housingData)
+
+ggplot(housingData, aes(x = Year.Built, y = Market.Value.per.SqFt)) + geom_point(color = "slateblue") +
+  labs(title = "Market Value Per Square Feet vs Year Built",
+       x = "Year Built",
+       y = "Market Value Per Square Feet")
+
+
+ggplot(housingData, aes(x = Market.Value.per.SqFt)) + geom_histogram(bins = 30, fill = "lightgreen", color = "black") +
+  labs(title = "Market Value Per Square Feet Distribution",
+       x = "Market Value Per Square Feet",
+       y = "Frequency")
+
+
+ggplot(housingData, aes(x = Boro, y = Market.Value.per.SqFt)) + geom_boxplot(fill = "orange") + 
+  labs(title = "Market Value Per Square Feet by Borough",
+       x = "Borough",
+       y = "Market Value Per Square Feet")
+
+```
+
+c. Write a summary about your findings from this exercise.
+
+=> Enter your answer here!
+Market Value Per Square Feet vs Year Built:
+From the plot we can see that there is a clear indication of recently built properties resulting in higher market value. Although old, the data also shows that older houses still are in demand/hold a high value as well. Specifically we can see within the years closer to 1900s, there are tight clusters with high market value on specific years.
+
+Market Value Per Square Feet Distribution:
+When viewing this plot, we can see that there is more demand on market value between the 100 and 200 values. From this we can make the observation of properties are seen as being price lower than the average rate when looking at the ranges between 300-400.
+The plot tells us thatt there are more affordable prices within the data set as there is a clear bias towards the 100-200 range.
+
+Market Value Per Square Feet by Borough:
+The plot shows us a breakdown on the boroughs and their relation to the market value, from this we can see that there is a clear indication of Manhattan being within the median market. We also see that Manhattan is valued at a bigger range, suggesting that Manhattan has more price variability. Another observation would be that Staten Island has the lowest value among the boroughs, making it have the lowest range of price variability among the other boroughs. There are indications of the Bronx and Staten Island being seen as the most affordable among all the other borough options.
+
+
